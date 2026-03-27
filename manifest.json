@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "NCKU Moodle Session Keeper",
+  "version": "1.0",
+  "description": "自動點擊「延長連線時間」。",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://moodle.ncku.edu.tw/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_end",
+      "world": "MAIN"
+    }
+  ],
+  "permissions": []
+}
