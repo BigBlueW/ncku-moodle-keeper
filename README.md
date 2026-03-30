@@ -22,6 +22,8 @@
 5. 登入 NCKU Moodle 後，擴充功能將會自動開始運作。
 
 ### 注意事項
+- **電腦需保持開啟**：若電腦進入睡眠或休眠狀態，擴充功能將停止運作。
+- **需開啟 Moodle 頁面**：您必須在瀏覽器中保持至少一個 Moodle 分頁開啟，擴充功能才能在該頁面執行背景續期。
 - **權限**：需要 `storage` 權限以儲存您的 Auto-fill 開關狀態。
 
 ---
@@ -44,4 +46,6 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 5. Once you log in to NCKU Moodle, the extension will activate automatically.
 
 ### Important Notes
+- **Keep Computer Awake**: The extension will stop working if your computer goes to sleep or hibernate.
+- **Keep Moodle Tab Open**: You must keep at least one Moodle tab open in your browser for the extension to perform its background keep-alive tasks.
 - **Permissions**: Requires the `storage` permission to save your Auto-fill preference.
