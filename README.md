@@ -6,11 +6,13 @@
 
 ## 繁體中文
 
-這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台經常自動登出的問題。它會自動點擊「延長連線時間」按鈕，並在背景定期與伺服器通訊以保持連線。
+這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台經常自動登出的問題。它支援自動延長連線，並具備本地 OCR 驗證碼辨識功能。
 
 ### 核心功能
 - **自動續期**：每 9 分鐘自動與 Moodle 通訊，防止連線過期。
-- **自動點擊**：若畫面上出現彈出的「延長連線時間」對話框，程式會自動為您點擊。
+- **本地 OCR 驗證碼辨識**：
+  - **全本地執行**：使用 Tesseract.js 在瀏覽器內完成辨識，不需配置 API key。
+  - **開關控制**：在驗證碼圖片旁設有「AutoCaptcha」開關，可切換是否自動輸入（狀態會持久儲存）。
 
 ### 如何啟用
 1. 下載此專案的所有檔案。
@@ -20,18 +22,19 @@
 5. 登入 NCKU Moodle 後，擴充功能將會自動開始運作。
 
 ### 注意事項
-- **電腦需保持開啟**：若電腦進入睡眠或休眠狀態，擴充功能將停止運作。
-- **需開啟 Moodle 頁面**：您必須在瀏覽器中保持至少一個 Moodle 分頁開啟，擴充功能才能在該頁面執行背景續期。
+- **權限**：需要 `storage` 權限以儲存您的 Auto-fill 開關狀態。
 
 ---
 
 ## English
 
-A simple browser extension designed to prevent automatic logout on the NCKU Moodle platform. It automatically clicks the "Extend session" button and periodically pings the server to keep your connection alive.
+A simple browser extension designed to prevent automatic logout on the NCKU Moodle platform, now with built-in Local OCR for captcha solving.
 
 ### Key Features
 - **Auto-Renewal**: Automatically communicates with Moodle every 9 minutes to prevent session expiration.
-- **Auto-Click**: Automatically clicks the "Extend session" button if the popup dialog appears.
+- **Local OCR Captcha Solver**:
+  - **Privacy First**: Recognizes captchas locally using Tesseract.js. No external APIs used.
+  - **Persistence Toggle**: Includes an "AutoCaptcha" switch next to the captcha to enable/disable the feature, with the state saved across sessions.
 
 ### How to Enable
 1. Download all files in this project.
@@ -41,5 +44,4 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 5. Once you log in to NCKU Moodle, the extension will activate automatically.
 
 ### Important Notes
-- **Keep Computer Awake**: The extension will stop working if your computer goes to sleep or hibernate.
-- **Keep Moodle Tab Open**: You must keep at least one Moodle tab open in your browser for the extension to perform its background keep-alive tasks.
+- **Permissions**: Requires the `storage` permission to save your Auto-fill preference.
