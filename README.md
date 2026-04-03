@@ -6,11 +6,12 @@
 
 ## 繁體中文
 
-這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台經常自動登出的問題。它支援自動延長連線，並具備本地 OCR 驗證碼辨識功能。
+這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台自動登出的問題。現在不僅支援 Moodle 的自動延長連線，還支援全校多個系統（如 Moodle、選課系統、futureplus 等）的驗證碼自動辨識功能。
 
 ### 核心功能
 - **自動續期**：每 9 分鐘自動與 Moodle 通訊，防止連線過期。
 - **自定義輕量級驗證碼辨識**：
+  - **全校系統支援**：不僅支援 Moodle，也支援成功大學選課系統 (`course.ncku.edu.tw`)、FuturePlus (`futureplus.ncku.edu.tw`) 等其他具有類似驗證碼機制的 NCKU 入口網站。
   - **極速辨識**：捨棄重型 Tesseract.js，改用自研樣板匹配演算法，體積縮小 99%，辨識近乎瞬時。
   - **全本地執行**：完全在瀏覽器內完成，不需連網，不需 API key。
 
@@ -20,7 +21,7 @@
 3. 打開 Chrome，進入 `擴充功能` 頁面 (`chrome://extensions/`)。
 4. 開啟右上角的「**開發者模式**」。
 5. 點擊「**載入未封裝項目**」，並選擇剛剛解壓縮的文件夾。
-6. 登入 NCKU Moodle 後，擴充功能將會自動開始運作。
+6. 登入 NCKU Moodle 或其他成大系統時，擴充功能將會自動幫您填入驗證碼。
 
 ### 給開發者（從原始碼安裝）
 如果你要修改程式碼或使用訓練工具 (`trainer.html`)：
@@ -36,11 +37,12 @@
 
 ## English
 
-A simple browser extension designed to prevent automatic logout on the NCKU Moodle platform, now with built-in Local OCR for captcha solving.
+A simple browser extension designed to prevent automatic logout on the NCKU Moodle platform. It has now been upgraded to support captcha auto-solving across multiple NCKU systems (including Moodle, Course Registration, and FuturePlus).
 
 ### Key Features
 - **Auto-Renewal**: Automatically communicates with Moodle every 9 minutes to prevent session expiration.
 - **Customized Lightweight Captcha Solver**:
+  - **Campus-Wide Support**: Works not only on Moodle but also on other NCKU portals like the Course Registration system (`course.ncku.edu.tw`) and FuturePlus (`futureplus.ncku.edu.tw`).
   - **Extremely Fast**: Replaces heavy Tesseract.js with a self-developed template matching algorithm, reducing size by 99% for near-instant recognition.
   - **All Local Execution**: Runs entirely within the browser, requiring no internet connection or API keys.
 
@@ -50,7 +52,7 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 3. Open Chrome and go to the `Extensions` page (`chrome://extensions/`).
 4. Enable "**Developer mode**" in the top right corner.
 5. Click "**Load unpacked**" and select the unzipped folder.
-6. Once you log in to NCKU Moodle, the extension will activate automatically.
+6. When you log in to NCKU Moodle or other supported systems, the captcha will be solved automatically.
 
 ### For Developers (From Source)
 If you want to modify the code or use the training tools (like `trainer.html`):

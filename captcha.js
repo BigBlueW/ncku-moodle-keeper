@@ -9,13 +9,25 @@
     const DEBUG = false;
     const LOG_PREFIX = '[NCKU Moodle Keeper]';
 
-    const CAPTCHA_IMG_ID = 'imgcode';
-    const CAPTCHA_INPUT_ID = 'reg_vcode';
-    const STORAGE_KEY = 'captchaAutoFill';
+    const CONFIGS = [
+        {
+            name: "Moodle",
+            imgSelector: "#imgcode",
+            inputSelector: "#reg_vcode",
+            templateFile: "templates.json"
+        },
+        {
+            name: "NCKU Portal",
+            imgSelector: "img[src*='c=verifycode']",
+            inputSelector: "input[name='code']",
+            templateFile: "templates2.json"
+        }
+    ];
 
     const MAX_RETRIES = 20;
     const RETRY_DELAY_MS = 100;
 
+    let currentConfig = null;
     let templates = null;
     let isProcessing = false;
     let retryCount = 0;
@@ -25,7 +37,8 @@
 
     function loadTemplates() {
         if (templates) return Promise.resolve(templates);
-        return fetch(chrome.runtime.getURL('templates.json'))
+        if (!currentConfig) return Promise.resolve(null);
+        return fetch(chrome.runtime.getURL(currentConfig.templateFile))
             .then(res => res.json())
             .then(data => {
                 templates = data;
@@ -137,9 +150,10 @@
     async function solveCaptcha() {
         if (isProcessing) return;
         if (!templates) return;
+        if (!currentConfig) return;
 
-        const imgEl = document.getElementById(CAPTCHA_IMG_ID);
-        const inputEl = document.getElementById(CAPTCHA_INPUT_ID);
+        const imgEl = document.querySelector(currentConfig.imgSelector);
+        const inputEl = document.querySelector(currentConfig.inputSelector);
         if (!imgEl || !inputEl) return;
 
         if (!imgEl.complete || imgEl.naturalWidth === 0) {
@@ -200,9 +214,20 @@
     // ─── Initialization ──────────────────────────────────────────────────────────
 
     async function setup() {
-        const imgEl = document.getElementById(CAPTCHA_IMG_ID);
-        const inputEl = document.getElementById(CAPTCHA_INPUT_ID);
-        if (!imgEl || !inputEl) return;
+        // Find which config matches the current page
+        for (const config of CONFIGS) {
+            const imgEl = document.querySelector(config.imgSelector);
+            const inputEl = document.querySelector(config.inputSelector);
+            if (imgEl && inputEl) {
+                currentConfig = config;
+                break;
+            }
+        }
+
+        if (!currentConfig) return;
+
+        const imgEl = document.querySelector(currentConfig.imgSelector);
+        const inputEl = document.querySelector(currentConfig.inputSelector);
 
         if (imgEl.dataset.ocrAttached) return;
         imgEl.dataset.ocrAttached = "true";
@@ -219,7 +244,11 @@
     function startObserving() {
         if (observer) return;
         observer = new MutationObserver(() => {
-            if (document.getElementById(CAPTCHA_IMG_ID)) setup();
+            if (!currentConfig) {
+                setup();
+            } else {
+                if (document.querySelector(currentConfig.imgSelector)) setup();
+            }
         });
         observer.observe(document.body, { childList: true, subtree: true });
     }
