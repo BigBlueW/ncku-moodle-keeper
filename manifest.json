@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
   "name": "NCKU Moodle Session Keeper",
-  "version": "1.2",
-  "description": "自動延長連線時間，並自動辨識並輸入 Moodle 驗證碼（本地 OCR）。",
+  "version": "1.3",
+  "description": "自動延長連線時間，並辨識驗證碼。",
   "content_scripts": [
     {
       "matches": [
         "https://moodle.ncku.edu.tw/*"
       ],
       "js": [
-        "vendor/tesseract.min.js",
         "session_keeper.js",
         "captcha.js"
       ],
@@ -19,14 +18,11 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "vendor/*"
+        "templates.json"
       ],
       "matches": [
         "https://moodle.ncku.edu.tw/*"
       ]
     }
-  ],
-  "permissions": [
-    "storage"
   ]
 }

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NCKU Captcha Unified Trainer</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f0f2f5;
+            padding: 2rem;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1a73e8;
+            margin-top: 0;
+        }
+
+        .section {
+            display: none;
+            padding: 1rem 0;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        canvas {
+            display: inline-block;
+            image-rendering: pixelated;
+            width: 200px;
+            height: 80px;
+            border: 2px solid #ddd;
+            background: #eee;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"] {
+            font-size: 2rem;
+            width: 150px;
+            text-align: center;
+            border: 2px solid #1a73e8;
+            border-radius: 4px;
+            padding: 5px;
+            outline: none;
+        }
+
+        .log {
+            margin-top: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 0.8rem;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>Unified Captcha Trainer</h1>
+
+        <!-- Step 1: Manual Collection -->
+        <div id="sec-fetch" class="section active">
+            <p>Due to browser security (CORS), please follow these steps to collect samples:</p>
+            <div
+                style="text-align: left; background: #fafafa; padding: 15px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px;">
+                1. Login to NCKU Moodle.<br>
+                2. Press <code>F12</code> to open Console.<br>
+                3. Copy and run the script below:<br>
+                <textarea id="script-box" readonly
+                    style="height: 100px; margin-top: 5px;">(async function(){for(let i=0;i<50;i++){const res=await fetch('/lib/imgcode.php?_='+Date.now());const b=await res.blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`c${i}.png`;a.click();await new Promise(r=>setTimeout(r,300));}})();</textarea>
+                <br>or below (for other NCKU login page):<br>
+                <textarea id="script-box-2" readonly
+                    style="height: 100px; margin-top: 5px;">(async function(){for(let i=0;i<50;i++){const res=await fetch('./index.php?c=verifycode');const b=await res.blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`c${i}.png`;a.click();await new Promise(r=>setTimeout(r,300));}})();</textarea>
+                <br>4. Put all downloaded <code>.png</code> files into a folder.
+            </div>
+
+            <p><strong>Step 2: Load Data (Incremental Training)</strong></p>
+            <div
+                style="text-align: left; background: #e8f0fe; padding: 15px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px;">
+                <label><strong>Optional: Load existing templates.json</strong> (Faster labeling!)</label><br>
+                <input type="file" id="template-input" accept=".json" style="margin-top: 5px;">
+            </div>
+            <div
+                style="text-align: left; padding: 15px; border: 1px dashed #ccc; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px;">
+                <label><strong>Select Downloaded Images:</strong></label><br>
+                <input type="file" id="file-input" multiple accept="image/png" style="margin-top: 5px;">
+            </div>
+            <div class="progress" id="fetch-prog"></div>
+        </div>
+
+        <!-- Phase 2: Labeling -->
+        <div id="sec-label" class="section">
+            <p>Type the 4 digits (or correct the suggestion) and press <strong>Enter</strong>.</p>
+            <canvas id="lbl-canvas"></canvas><br>
+            <input type="text" id="lbl-input" maxlength="4" placeholder="????" autocomplete="off"><br>
+            <div class="progress" id="lbl-prog"></div>
+        </div>
+
+        <!-- Phase 3: Results & Testing -->
+        <div id="sec-result" class="section">
+            <h2 style="color: #28a745;">Training Complete!</h2>
+            <div class="progress" id="res-accuracy"></div>
+            <p>New templates generated & optimized with old data.</p>
+            <button class="btn" id="btn-download" style="background: #28a745;">Download templates.json</button>
+            <br><br>
+            <button class="btn" onclick="location.reload()" style="background: #666;">Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        let generatedTemplates = null;
+        let existingTemplates = null;
+        const images = [];
+        const labels = [];
+        let currentLabelIdx = 0;
+
+        // --- Phase 1: Importing ---
+        const fileInput = document.getElementById('file-input');
+        const templateInput = document.getElementById('template-input');
+
+        templateInput.onchange = async (e) => {
+            const text = await e.target.files[0].text();
+            try {
+                existingTemplates = JSON.parse(text);
+                alert("Templates loaded! Auto-labeling enabled.");
+            } catch (err) {
+                alert("Invalid templates.json file.");
+            }
+        };
+
+        fileInput.onchange = async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            document.getElementById('fetch-prog').innerText = "Loading images...";
+
+            for (const file of files) {
+                await new Promise(resolve => {
+                    const img = new Image();
+                    img.onload = () => { images.push(img); resolve(); };
+                    img.src = URL.createObjectURL(file);
+                });
+            }
+
+            document.getElementById('sec-fetch').classList.remove('active');
+            document.getElementById('sec-label').classList.add('active');
+            showLabelImage();
+        };
+
+        // --- Phase 2: Labeling ---
+        const canvas = document.getElementById('lbl-canvas');
+        const ctx = canvas.getContext('2d');
+        const input = document.getElementById('lbl-input');
+        const prog = document.getElementById('lbl-prog');
+
+        function showLabelImage() {
+            if (currentLabelIdx >= images.length) {
+                finishLabeling();
+                return;
+            }
+            const img = images[currentLabelIdx];
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+
+            // Auto-label if templates exist
+            if (existingTemplates) {
+                input.value = solve(img, existingTemplates);
+                input.select();
+            } else {
+                input.value = '';
+            }
+            input.focus();
+            prog.innerText = `Image ${currentLabelIdx + 1} of ${images.length}`;
+        }
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const val = input.value.trim();
+                if (val.length === 4) {
+                    labels.push(val);
+                    currentLabelIdx++;
+                    showLabelImage();
+                }
+            }
+        });
+
+        // --- Phase 3: Processing & Results ---
+        function finishLabeling() {
+            document.getElementById('sec-label').classList.remove('active');
+            document.getElementById('sec-result').classList.add('active');
+
+            generatedTemplates = generateTemplates();
+            const accuracy = runValidation(generatedTemplates);
+
+            document.getElementById('res-accuracy').innerText = `Re-validation Accuracy: ${(accuracy * 100).toFixed(1)}%`;
+
+            document.getElementById('btn-download').onclick = () => {
+                const blob = new Blob([JSON.stringify(generatedTemplates)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'templates.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+        }
+
+        function generateTemplates() {
+            const digitSamples = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] };
+
+            // Inject existing templates as samples to preserve "knowledge"
+            if (existingTemplates) {
+                for (let d = 0; d <= 9; d++) {
+                    if (existingTemplates[d]) digitSamples[d].push(existingTemplates[d]);
+                }
+            }
+
+            for (let i = 0; i < images.length; i++) {
+                const code = labels[i];
+                const bits = getBinarizedBits(images[i]);
+                const digitsMatrix = segmentDigits(bits, images[i].width, images[i].height);
+                if (digitsMatrix.length === 4) {
+                    for (let d = 0; d < 4; d++) digitSamples[code[d]].push(digitsMatrix[d]);
+                }
+            }
+
+            const finalTemplates = {};
+            for (let d = 0; d <= 9; d++) {
+                if (digitSamples[d].length === 0) { finalTemplates[d] = [[0]]; continue; }
+
+                let maxW = 0, maxH = 0;
+                digitSamples[d].forEach(m => { maxW = Math.max(maxW, m[0].length); maxH = Math.max(maxH, m.length); });
+                const freqMap = Array.from({ length: maxH }, () => new Array(maxW).fill(0));
+
+                digitSamples[d].forEach(m => {
+                    const ox = Math.floor((maxW - m[0].length) / 2), oy = Math.floor((maxH - m.length) / 2);
+                    for (let y = 0; y < m.length; y++) for (let x = 0; x < m[0].length; x++) if (m[y][x]) freqMap[oy + y][ox + x]++;
+                });
+
+                const thresh = digitSamples[d].length * 0.5;
+                let tmp = freqMap.map(r => r.map(v => v > thresh ? 1 : 0));
+
+                // Crop
+                let minX = maxW, maxX = 0, minY = maxH, maxY = 0, found = false;
+                for (let y = 0; y < maxH; y++) for (let x = 0; x < maxW; x++) if (tmp[y][x]) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y); found = true; }
+
+                if (!found) { finalTemplates[d] = [[0]]; continue; }
+
+                let res = Array.from({ length: maxY - minY + 1 }, () => new Array(maxX - minX + 1).fill(0));
+                for (let y = 0; y <= maxY - minY; y++) for (let x = 0; x <= maxX - minX; x++) res[y][x] = tmp[minY + y][minX + x];
+                finalTemplates[d] = res;
+            }
+            return finalTemplates;
+        }
+
+        function runValidation(templates) {
+            let correct = 0;
+            for (let i = 0; i < images.length; i++) {
+                const actual = labels[i];
+                const bits = getBinarizedBits(images[i]);
+                const digits = segmentDigits(bits, images[i].width, images[i].height);
+                const pred = solve(images[i], templates);
+                if (pred === actual) correct++;
+            }
+            return correct / images.length;
+        }
+
+        // --- Core Recognition Logic ---
+
+        function solve(img, tps) {
+            const bits = getBinarizedBits(img);
+            const digits = segmentDigits(bits, img.width, img.height);
+            let pred = "";
+            if (digits.length === 4) {
+                digits.forEach(m => {
+                    let best = "?", max = -Infinity;
+                    for (let d = 0; d <= 9; d++) {
+                        let score = compare(m, tps[d]);
+                        if (score > max) { max = score; best = d; }
+                    }
+                    pred += best;
+                });
+            }
+            return pred || "????";
+        }
+
+        function getBinarizedBits(img) {
+            const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+            const cx = c.getContext('2d'); cx.drawImage(img, 0, 0);
+            const data = cx.getImageData(0, 0, img.width, img.height).data;
+            const bits = [];
+            for (let i = 0; i < data.length; i += 4) bits.push((data[i] < 160 || data[i + 1] < 160 || data[i + 2] < 160) ? 1 : 0);
+            return bits;
+        }
+
+        function segmentDigits(bits, w, h) {
+            let clean = new Array(bits.length).fill(0);
+            for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) if (bits[y * w + x]) {
+                let nb = 0;
+                for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if ((dx || dy) && bits[(y + dy) * w + (x + dx)]) nb++;
+                if (nb >= 1) clean[y * w + x] = 1;
+            }
+
+            const vis = new Set(), comps = [];
+            for (let i = 0; i < clean.length; i++) {
+                if (clean[i] && !vis.has(i)) {
+                    let comp = [], q = [i]; vis.add(i);
+                    while (q.length) {
+                        let c = q.shift(); comp.push(c);
+                        let cx = c % w, cy = Math.floor(c / w);
+                        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                            let nx = cx + dx, ny = cy + dy, ni = ny * w + nx;
+                            if (nx >= 0 && nx < w && ny >= 0 && ny < h && clean[ni] && !vis.has(ni)) { vis.add(ni); q.push(ni); }
+                        }
+                    }
+                    if (comp.length > 10) comps.push(comp);
+                }
+            }
+            return comps.map(comp => {
+                let rx = w, lx = 0, ty = h, by = 0;
+                comp.forEach(i => { let x = i % w, y = Math.floor(i / w); rx = min(rx, x); lx = max(lx, x); ty = min(ty, y); by = max(by, y); });
+                let m = Array.from({ length: by - ty + 1 }, () => new Array(lx - rx + 1).fill(0));
+                comp.forEach(i => m[Math.floor(i / w) - ty][i % w - rx] = 1);
+                return { x: rx, m };
+            }).sort((a, b) => a.x - b.x).map(d => d.m).slice(0, 4);
+        }
+
+        function min(a, b) { return a < b ? a : b; }
+        function max(a, b) { return a > b ? a : b; }
+
+        function compare(m1, m2) {
+            const h1 = m1.length, w1 = m1[0].length, h2 = m2.length, w2 = m2[0].length;
+            let bs = -Infinity;
+            for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+                let s = 0;
+                for (let y = 0; y < Math.max(h1, h2 + dy); y++) for (let x = 0; x < Math.max(w1, w2 + dx); x++) {
+                    let v1 = (y < h1 && x < w1) ? m1[y][x] : 0, v2 = (y - dy >= 0 && y - dy < h2 && x - dx >= 0 && x - dx < w2) ? m2[y - dy][x - dx] : 0;
+                    if (v1 && v2) s += 2; else if (v1 !== v2) s -= 1;
+                }
+                bs = Math.max(bs, s);
+            }
+            return bs;
+        }
+    </script>
+</body>
+
+</html>
