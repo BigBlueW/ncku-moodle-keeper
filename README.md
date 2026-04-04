@@ -6,14 +6,14 @@
 
 ## 繁體中文
 
-這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台自動登出的問題。現在不僅支援 Moodle 的自動延長連線，還支援全校多個系統（如 Moodle、選課系統、futureplus 等）的驗證碼自動辨識功能。
+這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台自動登出的問題。現在同時支援 Moodle 的自動延長連線，還支援全校多個系統（如 Moodle、選課系統、futureplus 等）的驗證碼自動辨識功能。
 
 ### 核心功能
 - **自動續期**：每 9 分鐘自動與 Moodle 通訊，防止連線過期。
 - **自定義輕量級驗證碼辨識**：
   - **全校系統支援**：不僅支援 Moodle，也支援成功大學選課系統 (`course.ncku.edu.tw`)、FuturePlus (`futureplus.ncku.edu.tw`) 等其他具有類似驗證碼機制的 NCKU 入口網站。
-  - **極速辨識**：捨棄重型 Tesseract.js，改用自研樣板匹配演算法，體積縮小 99%，辨識近乎瞬時。
-  - **全本地執行**：完全在瀏覽器內完成，不需連網，不需 API key。
+  - **極速辨識**：使用樣板匹配演算法，體積小，辨識速度快。
+  - **全本地執行**：完全在瀏覽器內完成，不需額外設定、不需 API key。
 
 ### 如何啟用（一般使用者）
 1. 在 GitHub 的 **Releases** 頁面下載最新版 `ncku-moodle-keeper.zip`。
@@ -31,7 +31,6 @@
 ### 注意事項
 - **電腦需保持開啟**：若電腦進入睡眠或休眠狀態，擴充功能將停止運作。
 - **需開啟 Moodle 頁面**：您必須在瀏覽器中保持至少一個 Moodle 分頁開啟，擴充功能才能在該頁面執行背景續期。
-- **權限**：需要 `storage` 權限以儲存您的 Auto-fill 開關狀態。
 
 ---
 
@@ -43,8 +42,8 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 - **Auto-Renewal**: Automatically communicates with Moodle every 9 minutes to prevent session expiration.
 - **Customized Lightweight Captcha Solver**:
   - **Campus-Wide Support**: Works not only on Moodle but also on other NCKU portals like the Course Registration system (`course.ncku.edu.tw`) and FuturePlus (`futureplus.ncku.edu.tw`).
-  - **Extremely Fast**: Replaces heavy Tesseract.js with a self-developed template matching algorithm, reducing size by 99% for near-instant recognition.
-  - **All Local Execution**: Runs entirely within the browser, requiring no internet connection or API keys.
+  - **Extremely Fast**: Uses a template matching algorithm, small size, fast recognition.
+  - **All Local Execution**: Runs entirely within the browser, no extra setup, no API keys required.
 
 ### How to Enable (For Users)
 1. Go to the project's **Releases** page and download the latest `ncku-moodle-keeper.zip`.
@@ -62,4 +61,3 @@ If you want to modify the code or use the training tools (like `trainer.html`):
 ### Important Notes
 - **Keep Computer Awake**: The extension will stop working if your computer goes to sleep or hibernate.
 - **Keep Moodle Tab Open**: You must keep at least one Moodle tab open in your browser for the extension to perform its background keep-alive tasks.
-- **Permissions**: Requires the `storage` permission to save your Auto-fill preference.

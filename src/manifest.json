@@ -1,8 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "NCKU Moodle Session Keeper",
-  "version": "1.4",
+  "name": "NCKU Moodle Keeper",
+  "version": "2.0",
   "description": "自動延長連線時間，並辨識驗證碼。",
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
   "content_scripts": [
     {
       "matches": [
