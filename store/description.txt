@@ -1,0 +1,34 @@
+這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台自動登出的問題，同時支援自動辨識與填寫驗證碼。
+
+【核心功能】
+1. 自動續期：
+每 9 分鐘自動在背景與 Moodle 通訊，防止您的登入狀態過期。
+
+2. 自動驗證碼辨識：
+支援多個 NCKU 相關入口網站的驗證碼自動辨識，包含：
+- NCKU Moodle
+- 成功大學選課系統 (course.ncku.edu.tw)
+- FuturePlus (futureplus.ncku.edu.tw)
+- 等等
+
+本擴充功能不需要連上外部伺服器，具有極速辨識的優勢。所有辨識過程皆在您的瀏覽器本地端完成，確保隱私與安全。
+
+【使用注意事項】
+您的電腦需處於開啟狀態，擴充功能才能持續發揮作用。如果要讓 Moodle 自動續期生效，瀏覽器必須至少開啟一個 Moodle 頁面。
+
+---
+
+A simple browser extension designed to prevent automatic logout on the NCKU Moodle platform, featuring an intelligent captcha auto-solver.
+
+[Key Features]
+1. Auto-Renewal: Automatically communicates with Moodle in the background every 9 minutes to prevent session expiration.
+
+2. Captcha Solver: Supports lightning-fast automatic captcha recognition for multiple NCKU portals:
+- NCKU Moodle
+- Course Registration system 
+- FuturePlus
+- etc.
+
+It uses a lightweight template matching algorithm. It does NOT use external APIs, meaning all processes run locally on your browser.
+
+(Please note your browser needs to have at least one Moodle tab open for the keep-alive task to function)
