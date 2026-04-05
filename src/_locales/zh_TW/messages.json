@@ -1,0 +1,4 @@
+{
+  "extName": { "message": "NCKU Moodle Keeper" },
+  "extDescription": { "message": "自動延長連線時間，並辨識驗證碼。" }
+}

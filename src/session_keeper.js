@@ -3,12 +3,6 @@ const DEBUG = false;
 const RENEW_INTERVAL = 9 * 60 * 1000; // 9 minutes
 const CHECK_INTERVAL = 30 * 1000; // 30 seconds
 const STORAGE_KEY = 'ncku-moodle-keeper-last-ping';
-// const TARGET_BUTTON_SELECTOR = [
-//     'value="延長連線時間"',
-//     'value="Extend session"',
-//     'value="延长连接时间"',
-//     'value="延長"',
-// ].map(val => `input[type="button"].btn.btn-primary[${val}]`).join(', ');
 
 /**
  * Proactively renews the session if it's been long enough since the last renew.
@@ -36,29 +30,6 @@ function renewSession() {
         });
 }
 
-/**
- * Clicks the "Extend Session" button if it appears in a popup.
- */
-// function clickExtendButton() {
-//     const extendButton = document.querySelector(TARGET_BUTTON_SELECTOR);
-//     if (extendButton) {
-//         extendButton.click();
-//         if (DEBUG) console.log('[NCKU Moodle Keeper] Extend button clicked automatically.');
-//     }
-// }
-
 // Proactive rhythm
-setInterval(renewSession, CHECK_INTERVAL); // Check every CHECK_INTERVAL
-renewSession(); // Immediate check on load
-
-// // Reactive rhythm (MutationObserver for popups)
-// const observer = new MutationObserver((mutations) => {
-//     // Only check if nodes were actually added to avoid over-calculating
-//     const hasAddedNodes = mutations.some(m => m.addedNodes.length > 0);
-//     if (hasAddedNodes) {
-//         clickExtendButton();
-//     }
-// });
-
-// observer.observe(document.body, { childList: true, subtree: true });
-// clickExtendButton(); // Check once on load
+setInterval(renewSession, CHECK_INTERVAL);
+renewSession();
