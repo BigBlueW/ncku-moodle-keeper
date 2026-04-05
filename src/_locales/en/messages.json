@@ -1,0 +1,4 @@
+{
+  "extName": { "message": "NCKU Moodle Keeper" },
+  "extDescription": { "message": "Automatically keep your NCKU Moodle session alive and auto-solve CAPTCHAs." }
+}

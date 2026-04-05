@@ -8,6 +8,10 @@
 
 這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台自動登出的問題。現在同時支援 Moodle 的自動延長連線，還支援全校多個系統（如 Moodle、選課系統、futureplus 等）的驗證碼自動辨識功能。
 
+### 快速上手
+
+我們的擴充功能目前已經上架到 Chrome Web Store，你可以直接在 [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo) 上安裝。由於 Chrome Web Store 的審核機制，若想更快使用到最新版本的擴充功能，可以查看 [如何啟用](#如何啟用一般使用者)。
+
 ### 核心功能
 - **自動續期**：每 9 分鐘自動與 Moodle 通訊，防止連線過期。
 - **自定義輕量級驗證碼辨識**：
@@ -37,6 +41,10 @@
 ## English
 
 A simple browser extension designed to prevent automatic logout on the NCKU Moodle platform. It has now been upgraded to support captcha auto-solving across multiple NCKU systems (including Moodle, Course Registration, and FuturePlus).
+
+### Quick Start
+
+Our extension is now available on the Chrome Web Store, you can install it directly from [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo). Due to Chrome Web Store's review process, if you want to use the latest version of the extension, you can refer to [How to Enable](#how-to-enable-for-users).
 
 ### Key Features
 - **Auto-Renewal**: Automatically communicates with Moodle every 9 minutes to prevent session expiration.
