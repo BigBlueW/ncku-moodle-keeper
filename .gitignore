@@ -5,3 +5,6 @@
 /dev/imgs2/*
 
 *.zip
+
+./web-ext-artifacts/
+*.xpi
