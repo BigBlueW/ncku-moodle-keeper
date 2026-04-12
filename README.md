@@ -10,7 +10,8 @@
 
 ### 快速上手
 
-我們的擴充功能目前已經上架到 Chrome Web Store，你可以直接在 [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo) 上安裝。由於 Chrome Web Store 的審核機制，若想更快使用到最新版本的擴充功能，可以查看 [如何啟用](#如何啟用一般使用者)。若你是 Firefox 使用者，可參考下方開發者段落使用 `build_xpi.sh` 打包 `.xpi`。
+- **Chrome 使用者**：您可以直接至 [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo) 安裝正式版。若想搶先體驗最新版本，請參考下方的 [如何手動安裝](#如何手動安裝)。
+- **Firefox 使用者**：請參考[給開發者](#給開發者從原始碼安裝)段落，使用 `build_xpi.sh` 自行打包 `.xpi` 檔使用。
 
 ### 核心功能
 - **自動續期**：每 9 分鐘自動與 Moodle 通訊，防止連線過期。
@@ -19,8 +20,8 @@
   - **極速辨識**：使用樣板匹配演算法，體積小，辨識速度快。
   - **全本地執行**：完全在瀏覽器內完成，不需額外設定、不需 API key。
 
-### 如何啟用（一般使用者）
-1. 在 GitHub 的 **Releases** 頁面下載最新版 `ncku-moodle-keeper.zip`。
+### 如何手動安裝
+1. 在 GitHub 的 [Releases](https://github.com/bigbluew/ncku-moodle-keeper/releases) 頁面下載最新版 `ncku-moodle-keeper.zip`。
 2. 解壓縮該檔案。
 3. 打開 Chrome，進入 `擴充功能` 頁面 (`chrome://extensions/`)。
 4. 開啟右上角的「**開發者模式**」。
@@ -28,7 +29,7 @@
 6. 登入 NCKU Moodle 或其他成大系統時，擴充功能將會自動幫您填入驗證碼。
 
 ### 給開發者（從原始碼安裝）
-如果你要修改程式碼或使用訓練工具 (`trainer.html`)：
+如果你要修改程式碼或使用訓練工具 (如 `trainer.html`)：
 1. 透過 `git clone` 或直接下載 Source ZIP 取得完整專案。
 2. 進行修改後，可執行 `./package.sh` 自動打包出純淨的 `ncku-moodle-keeper.zip` 供正式發布使用。
 3. 若要打包 Firefox 安裝檔，先安裝 `web-ext`（例如：`npm i -g web-ext`），再執行 `./build_xpi.sh` 產生 `.zip` 與 `.xpi`（輸出於 `web-ext-artifacts/`）。
@@ -45,7 +46,8 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 
 ### Quick Start
 
-Our extension is now available on the Chrome Web Store, you can install it directly from [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo). Due to Chrome Web Store's review process, if you want to use the latest version of the extension, you can refer to [How to Enable](#how-to-enable-for-users). If you use Firefox, see the developer section below for building an `.xpi` with `build_xpi.sh`.
+- **Chrome Users**: Install directly from the [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo). To test the latest unreleased updates, see [How to Install Manually](#how-to-install-manually) below.
+- **Firefox Users**: Please refer to the [For Developers](#for-developers-from-source) section to build and side-load an `.xpi` file using `build_xpi.sh`.
 
 ### Key Features
 - **Auto-Renewal**: Automatically communicates with Moodle every 9 minutes to prevent session expiration.
@@ -54,8 +56,8 @@ Our extension is now available on the Chrome Web Store, you can install it direc
   - **Extremely Fast**: Uses a template matching algorithm, small size, fast recognition.
   - **All Local Execution**: Runs entirely within the browser, no extra setup, no API keys required.
 
-### How to Enable (For Users)
-1. Go to the project's **Releases** page and download the latest `ncku-moodle-keeper.zip`.
+### How to Install Manually
+1. Go to the project's [Releases](https://github.com/bigbluew/ncku-moodle-keeper/releases) page and download the latest `ncku-moodle-keeper.zip`.
 2. Unzip the file.
 3. Open Chrome and go to the `Extensions` page (`chrome://extensions/`).
 4. Enable "**Developer mode**" in the top right corner.
