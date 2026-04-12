@@ -10,7 +10,7 @@
 
 ### 快速上手
 
-我們的擴充功能目前已經上架到 Chrome Web Store，你可以直接在 [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo) 上安裝。由於 Chrome Web Store 的審核機制，若想更快使用到最新版本的擴充功能，可以查看 [如何啟用](#如何啟用一般使用者)。
+我們的擴充功能目前已經上架到 Chrome Web Store，你可以直接在 [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo) 上安裝。由於 Chrome Web Store 的審核機制，若想更快使用到最新版本的擴充功能，可以查看 [如何啟用](#如何啟用一般使用者)。若你是 Firefox 使用者，可參考下方開發者段落使用 `build_xpi.sh` 打包 `.xpi`。
 
 ### 核心功能
 - **自動續期**：每 9 分鐘自動與 Moodle 通訊，防止連線過期。
@@ -31,6 +31,7 @@
 如果你要修改程式碼或使用訓練工具 (`trainer.html`)：
 1. 透過 `git clone` 或直接下載 Source ZIP 取得完整專案。
 2. 進行修改後，可執行 `./package.sh` 自動打包出純淨的 `ncku-moodle-keeper.zip` 供正式發布使用。
+3. 若要打包 Firefox 安裝檔，先安裝 `web-ext`（例如：`npm i -g web-ext`），再執行 `./build_xpi.sh` 產生 `.zip` 與 `.xpi`（輸出於 `web-ext-artifacts/`）。
 
 ### 注意事項
 - **電腦需保持開啟**：若電腦進入睡眠或休眠狀態，擴充功能將停止運作。
@@ -44,7 +45,7 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 
 ### Quick Start
 
-Our extension is now available on the Chrome Web Store, you can install it directly from [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo). Due to Chrome Web Store's review process, if you want to use the latest version of the extension, you can refer to [How to Enable](#how-to-enable-for-users).
+Our extension is now available on the Chrome Web Store, you can install it directly from [Chrome Web Store](https://chromewebstore.google.com/detail/ncku-moodle-keeper/npnhndaifpmkbolbkplmclenjejjfloo). Due to Chrome Web Store's review process, if you want to use the latest version of the extension, you can refer to [How to Enable](#how-to-enable-for-users). If you use Firefox, see the developer section below for building an `.xpi` with `build_xpi.sh`.
 
 ### Key Features
 - **Auto-Renewal**: Automatically communicates with Moodle every 9 minutes to prevent session expiration.
@@ -65,6 +66,7 @@ Our extension is now available on the Chrome Web Store, you can install it direc
 If you want to modify the code or use the training tools (like `trainer.html`):
 1. `git clone` or download the full source code.
 2. After making changes, you can run `./package.sh` to automatically generate a clean `ncku-moodle-keeper.zip` for release.
+3. To package a Firefox build, install `web-ext` first (for example: `npm i -g web-ext`), then run `./build_xpi.sh` to generate both `.zip` and `.xpi` artifacts in `web-ext-artifacts/`.
 
 ### Important Notes
 - **Keep Computer Awake**: The extension will stop working if your computer goes to sleep or hibernate.
