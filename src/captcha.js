@@ -21,11 +21,36 @@
             imgSelector: "img[src*='c=verifycode']",
             inputSelector: "input[name='code']",
             templateFile: "templates2.json"
+        },
+        {
+            // exptnsel.liberal.ncku.edu.tw
+            name: "Liberal Education",
+            imgSelector: "img[src*='index.php/verifycode']",
+            inputSelector: "input[name='code']",
+            templateFile: "templates2.json"
+        },
+        {
+            // course-query.acad.ncku.edu.tw/sum (summer course signup)
+            name: "Summer Course",
+            imgSelector: "img[src*='comm/captcha.php']",
+            inputSelector: "input[name='authcode']",
+            templateFile: "templates.json"
+        },
+        {
+            // score.ncku.edu.tw: the code is printed as plain text next to the input
+            name: "Score",
+            textSelector: "input[name='check_code'] + span",
+            inputSelector: "input[name='code']"
         }
     ];
 
     const MAX_RETRIES = 20;
     const RETRY_DELAY_MS = 100;
+    // Best-match score relative to the template's perfect score; below this the
+    // digit is treated as unrecognized and a fresh captcha is requested
+    const MIN_CONFIDENCE = 0.6;
+    // Components at least this wide are assumed to be touching digits
+    const MIN_SPLIT_WIDTH = 12;
 
     let currentConfig = null;
     let templates = null;
@@ -54,12 +79,14 @@
     // ─── Core Solver Logic ──────────────────────────────────────────────────────
 
     function getBinarizedBits(img) {
+        // Use the intrinsic size: pages may scale the <img> with CSS
+        const w = img.naturalWidth, h = img.naturalHeight;
         const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = w;
+        canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
-        const data = ctx.getImageData(0, 0, img.width, img.height).data;
+        const data = ctx.getImageData(0, 0, w, h).data;
         const bits = [];
         for (let i = 0; i < data.length; i += 4) {
             // Threshold based on text being dark vs light background
@@ -108,18 +135,48 @@
             }
         }
 
-        return components.map(comp => {
+        const bounds = comp => {
             let minX = w, maxX = 0, minY = h, maxY = 0;
             comp.forEach(idx => {
                 const x = idx % w, y = Math.floor(idx / w);
                 minX = Math.min(minX, x); maxX = Math.max(maxX, x);
                 minY = Math.min(minY, y); maxY = Math.max(maxY, y);
             });
+            return { comp, minX, maxX, minY, maxY };
+        };
+        const boxes = components.map(bounds);
+
+        // Touching digits form one wide component; cut the widest one at its
+        // thinnest column near the middle until there are 4 pieces
+        while (boxes.length > 0 && boxes.length < 4) {
+            let widest = 0;
+            boxes.forEach((b, i) => { if (b.maxX - b.minX > boxes[widest].maxX - boxes[widest].minX) widest = i; });
+            const b = boxes[widest];
+            const bw = b.maxX - b.minX + 1;
+            if (bw < MIN_SPLIT_WIDTH) break;
+
+            const colCount = new Array(bw).fill(0);
+            b.comp.forEach(idx => colCount[(idx % w) - b.minX]++);
+            let cut = -1;
+            for (let x = Math.floor(bw * 0.3); x <= Math.ceil(bw * 0.7); x++) {
+                if (cut < 0 || colCount[x] < colCount[cut] ||
+                    (colCount[x] === colCount[cut] && Math.abs(x - bw / 2) < Math.abs(cut - bw / 2))) cut = x;
+            }
+            const left = b.comp.filter(idx => (idx % w) - b.minX < cut);
+            const right = b.comp.filter(idx => (idx % w) - b.minX >= cut);
+            boxes.splice(widest, 1, bounds(left), bounds(right));
+        }
+
+        return boxes.map(({ comp, minX, maxX, minY, maxY }) => {
             const dw = maxX - minX + 1, dh = maxY - minY + 1;
             const matrix = Array.from({ length: dh }, () => new Array(dw).fill(0));
             comp.forEach(idx => { matrix[Math.floor(idx / w) - minY][(idx % w) - minX] = 1; });
             return { x: minX, matrix };
         }).sort((a, b) => a.x - b.x).map(d => d.matrix).slice(0, 4);
+    }
+
+    function perfectScore(template) {
+        return 2 * template.flat().reduce((sum, v) => sum + v, 0);
     }
 
     function compare(m1, m2) {
@@ -147,6 +204,25 @@
 
     // ─── Main Logic ─────────────────────────────────────────────────────────────
 
+    function fillInput(inputEl, code) {
+        // Set value natively to trigger events
+        const nativeSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+        nativeSetter.call(inputEl, code);
+        inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+        inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function solveTextCaptcha() {
+        const textEl = document.querySelector(currentConfig.textSelector);
+        const inputEl = document.querySelector(currentConfig.inputSelector);
+        if (!textEl || !inputEl || inputEl.dataset.ocrAttached) return;
+        const code = textEl.textContent.replace(/\D/g, '');
+        if (!code) return;
+        inputEl.dataset.ocrAttached = "true";
+        fillInput(inputEl, code);
+        if (DEBUG) console.log(`${LOG_PREFIX} Copied text code: ${code}`);
+    }
+
     async function solveCaptcha() {
         if (isProcessing) return;
         if (!templates) return;
@@ -166,7 +242,7 @@
 
         try {
             const bits = getBinarizedBits(imgEl);
-            const digitMatrices = segmentDigits(bits, imgEl.width, imgEl.height);
+            const digitMatrices = segmentDigits(bits, imgEl.naturalWidth, imgEl.naturalHeight);
 
             if (digitMatrices.length !== 4) {
                 throw new Error("Could not find exactly 4 digits");
@@ -179,19 +255,16 @@
                     const score = compare(m, templates[d]);
                     if (score > maxScore) { maxScore = score; bestDigit = String(d); }
                 }
+                if (bestDigit !== "?" && maxScore < MIN_CONFIDENCE * perfectScore(templates[bestDigit])) bestDigit = "?";
                 code += bestDigit;
             });
 
             if (code.includes("?")) throw new Error("Recognition incomplete");
 
             if (DEBUG) console.log(`${LOG_PREFIX} Recognized: ${code}`);
-            
-            // Set value natively to trigger events
-            const nativeSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-            nativeSetter.call(inputEl, code);
-            inputEl.dispatchEvent(new Event('input', { bubbles: true }));
-            inputEl.dispatchEvent(new Event('change', { bubbles: true }));
-            
+
+            fillInput(inputEl, code);
+
             retryCount = 0;
         } catch (err) {
             if (DEBUG) console.warn(`${LOG_PREFIX} Recognition failed: ${err.message}`);
@@ -215,16 +288,23 @@
 
     async function setup() {
         // Find which config matches the current page
-        for (const config of CONFIGS) {
-            const imgEl = document.querySelector(config.imgSelector);
-            const inputEl = document.querySelector(config.inputSelector);
-            if (imgEl && inputEl) {
-                currentConfig = config;
-                break;
+        if (!currentConfig) {
+            for (const config of CONFIGS) {
+                const sourceEl = document.querySelector(config.textSelector || config.imgSelector);
+                const inputEl = document.querySelector(config.inputSelector);
+                if (sourceEl && inputEl) {
+                    currentConfig = config;
+                    break;
+                }
             }
         }
 
         if (!currentConfig) return;
+
+        if (currentConfig.textSelector) {
+            solveTextCaptcha();
+            return;
+        }
 
         const imgEl = document.querySelector(currentConfig.imgSelector);
         const inputEl = document.querySelector(currentConfig.inputSelector);
@@ -247,7 +327,7 @@
             if (!currentConfig) {
                 setup();
             } else {
-                if (document.querySelector(currentConfig.imgSelector)) setup();
+                if (document.querySelector(currentConfig.textSelector || currentConfig.imgSelector)) setup();
             }
         });
         observer.observe(document.body, { childList: true, subtree: true });

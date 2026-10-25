@@ -16,7 +16,7 @@
 ### 核心功能
 - **自動續期**：每 9 分鐘自動與 Moodle 通訊，防止連線過期。
 - **自定義輕量級驗證碼辨識**：
-  - **全校系統支援**：不僅支援 Moodle，也支援成功大學選課系統 (`course.ncku.edu.tw`)、FuturePlus (`futureplus.ncku.edu.tw`) 等其他具有類似驗證碼機制的 NCKU 入口網站。
+  - **全校系統支援**：不僅支援 Moodle，也支援成功大學選課系統 (`course.ncku.edu.tw`)、FuturePlus (`futureplus.ncku.edu.tw`)、暑修報名 (`course-query.acad.ncku.edu.tw/sum`)、通識體驗課程選課 (`exptnsel.liberal.ncku.edu.tw`)、成績查詢 (`score.ncku.edu.tw`) 等 NCKU 入口網站。
   - **極速辨識**：使用樣板匹配演算法，體積小，辨識速度快。
   - **全本地執行**：完全在瀏覽器內完成，不需額外設定、不需 API key。
 
@@ -52,7 +52,7 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 ### Key Features
 - **Auto-Renewal**: Automatically communicates with Moodle every 9 minutes to prevent session expiration.
 - **Customized Lightweight Captcha Solver**:
-  - **Campus-Wide Support**: Works not only on Moodle but also on other NCKU portals like the Course Registration system (`course.ncku.edu.tw`) and FuturePlus (`futureplus.ncku.edu.tw`).
+  - **Campus-Wide Support**: Works not only on Moodle but also on other NCKU portals like the Course Registration system (`course.ncku.edu.tw`), FuturePlus (`futureplus.ncku.edu.tw`), Summer Course Signup (`course-query.acad.ncku.edu.tw/sum`), Liberal Education course selection (`exptnsel.liberal.ncku.edu.tw`) and Score Inquiry (`score.ncku.edu.tw`).
   - **Extremely Fast**: Uses a template matching algorithm, small size, fast recognition.
   - **All Local Execution**: Runs entirely within the browser, no extra setup, no API keys required.
 

@@ -9,6 +9,9 @@
 - NCKU Moodle
 - 成功大學選課系統 (course.ncku.edu.tw)
 - FuturePlus (futureplus.ncku.edu.tw)
+- 暑修報名系統
+- 通識體驗課程選課系統
+- 成績查詢系統
 - 等等
 
 本擴充功能不需要連上外部伺服器，具有極速辨識的優勢。所有辨識過程皆在您的瀏覽器本地端完成，確保隱私與安全。
@@ -27,6 +30,9 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 - NCKU Moodle
 - Course Registration system 
 - FuturePlus
+- Summer Course Signup
+- Liberal Education course selection
+- Score Inquiry
 - etc.
 
 It uses a lightweight template matching algorithm. It does NOT use external APIs, meaning all processes run locally on your browser.
