@@ -1,4 +1,4 @@
-這是一個簡單的瀏覽器擴充功能，旨在解決成功大學 (NCKU) Moodle 平台自動登出的問題，同時支援自動辨識與填寫驗證碼。
+NCKU Moodle Keeper 是為成功大學學生打造的瀏覽器擴充功能：防止 Moodle 自動登出、自動填寫成大各系統的驗證碼，還能在 Moodle 頁面上貼便利貼，記下每門課的規則與待辦。
 
 【核心功能】
 1. 自動續期：
@@ -14,21 +14,32 @@
 - 成績查詢系統
 - 等等
 
-本擴充功能不需要連上外部伺服器，具有極速辨識的優勢。所有辨識過程皆在您的瀏覽器本地端完成，確保隱私與安全。
+辨識使用輕量的樣板匹配演算法，不需要連上外部伺服器，所有辨識過程皆在您的瀏覽器本地端完成，確保隱私與安全。
+
+3. Moodle 便利貼（新功能）：
+有些課程有特別的規定，例如作業檔名一定要是「學號_姓名_HW1.pdf」？現在可以直接貼在那門課的頁面上。
+- 隨手貼上：在 Moodle 任一頁面按右鍵 →「在這裡新增便利貼」，便利貼會黏在您點的位置（例如某份作業旁邊），版面變動時也會跟著移動。
+- 支援 Markdown：粗體、清單、連結、程式碼，以及可以直接打勾的待辦清單。
+- 跨裝置同步：登入同一個瀏覽器帳號並開啟同步，便利貼會自動出現在您的其他電腦上。
+- 集中管理：Moodle 首頁按鈕列的「便利貼」按鈕，可以依課程瀏覽、搜尋、刪除所有便利貼，並一鍵前往所在頁面。
+
+便利貼只存放在您的瀏覽器中（透過瀏覽器內建的同步功能在您自己的裝置間同步），開發者不會收到任何資料。
 
 【使用注意事項】
 您的電腦需處於開啟狀態，擴充功能才能持續發揮作用。如果要讓 Moodle 自動續期生效，瀏覽器必須至少開啟一個 Moodle 頁面。
 
+本專案為開源專案：https://github.com/BigBlueW/ncku-moodle-keeper
+
 ---
 
-A simple browser extension designed to prevent automatic logout on the NCKU Moodle platform, featuring an intelligent captcha auto-solver.
+NCKU Moodle Keeper is a browser extension for NCKU students: it keeps you logged in to Moodle, fills in CAPTCHAs across NCKU systems for you, and lets you pin sticky notes on Moodle pages to keep track of each course's rules and to-dos.
 
 [Key Features]
 1. Auto-Renewal: Automatically communicates with Moodle in the background every 9 minutes to prevent session expiration.
 
 2. Captcha Solver: Supports lightning-fast automatic captcha recognition for multiple NCKU portals:
 - NCKU Moodle
-- Course Registration system 
+- Course Registration system
 - FuturePlus
 - Summer Course Signup
 - Liberal Education course selection
@@ -37,4 +48,15 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
 
 It uses a lightweight template matching algorithm. It does NOT use external APIs, meaning all processes run locally on your browser.
 
+3. Moodle Sticky Notes (New):
+Does a course insist that homework files be named "StudentID_Name_HW1.pdf"? Now you can pin that reminder right on the course page.
+- Pin Anywhere: Right-click anywhere on Moodle → "Add sticky note here". The note sticks to that spot (e.g. next to an assignment) and follows it when the layout changes.
+- Markdown: Bold, lists, links, code, and checklists you can tick off directly.
+- Synced Across Devices: With browser sync enabled, your notes show up on your other computers automatically.
+- Manage in One Place: The "Sticky Notes" button in the Moodle front page icon bar lets you browse notes by course, search, delete, and jump straight to each one.
+
+Notes are stored only in your browser (and synced between your own devices by your browser's built-in sync). The developer never receives any of your data.
+
 (Please note your browser needs to have at least one Moodle tab open for the keep-alive task to function)
+
+This project is open source: https://github.com/BigBlueW/ncku-moodle-keeper

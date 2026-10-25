@@ -1,6 +1,6 @@
 {
   "extName": { "message": "NCKU Moodle Keeper" },
-  "extDescription": { "message": "自動延長連線時間，並辨識驗證碼。" },
+  "extDescription": { "message": "自動延長 Moodle 連線、辨識成大各系統驗證碼，還能在 Moodle 頁面貼上跨裝置同步的便利貼。" },
   "menuAddNote": { "message": "在這裡新增便利貼" },
   "noteColor": { "message": "顏色" },
   "noteCollapse": { "message": "收合" },

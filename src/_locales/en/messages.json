@@ -1,6 +1,6 @@
 {
   "extName": { "message": "NCKU Moodle Keeper" },
-  "extDescription": { "message": "Automatically keep your NCKU Moodle session alive and auto-solve CAPTCHAs." },
+  "extDescription": { "message": "Keeps your NCKU Moodle session alive, auto-solves NCKU CAPTCHAs, and lets you pin synced sticky notes on Moodle pages." },
   "menuAddNote": { "message": "Add sticky note here" },
   "noteColor": { "message": "Color" },
   "noteCollapse": { "message": "Collapse" },
