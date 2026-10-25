@@ -57,20 +57,46 @@
         return url.href;
     }
 
-    function courseInfo() {
+    function isCourseHomeUrl(href, courseId) {
+        const url = new URL(href);
+        return url.pathname === '/course/view.php' && !url.hash && url.searchParams.get('id') === String(courseId);
+    }
+
+    /**
+     * Course and breadcrumb path of the current page, shown in the notes panel.
+     * Inside a course the path starts at the course
+     * (e.g. 1151_F720900_1 › 作業繳交區 › Chapter 3 習題).
+     */
+    function pageContext() {
         const match = document.body.className.match(/\bcourse-(\d+)\b/);
         const courseId = match ? Number(match[1]) : 0;
+        const crumbs = [...document.querySelectorAll('.breadcrumb .breadcrumb-item')].map(item => {
+            const link = item.querySelector('a');
+            return {
+                text: item.textContent.replace(/\s+/g, ' ').trim(),
+                url: link && /^https?:/.test(link.href) ? link.href : '',
+                title: link ? link.title.trim() : ''
+            };
+        }).filter(crumb => crumb.text);
+
         let courseName = '';
+        let path = crumbs.slice(1); // drop "Home"
         if (courseId > 1) {
-            const crumb = [...document.querySelectorAll('.breadcrumb a[href*="course/view.php"]')]
-                .find(a => new URL(a.href).searchParams.get('id') === String(courseId));
-            courseName = crumb ? crumb.textContent.trim() : '';
-            if (!courseName && location.pathname === '/course/view.php') {
+            const courseIndex = crumbs.findIndex(crumb => crumb.url && isCourseHomeUrl(crumb.url, courseId));
+            if (courseIndex >= 0) {
+                // The breadcrumb shows the course code; its title has the full name
+                courseName = crumbs[courseIndex].title || crumbs[courseIndex].text;
+                path = crumbs.slice(courseIndex);
+            } else if (location.pathname === '/course/view.php') {
                 const heading = document.querySelector('#page-header h1, .page-header-headings h1');
                 courseName = heading ? heading.textContent.trim() : '';
             }
         }
-        return { courseId, courseName };
+        return { courseId, courseName, path: path.map(({ text, url }) => ({ text, url })) };
+    }
+
+    function pageMetadata() {
+        return { ...pageContext(), pageTitle: document.title, url: pageUrl() };
     }
 
     // ─── Anchoring ─────────────────────────────────────────────────────────────
@@ -172,14 +198,15 @@
         view.saveTimer = setTimeout(() => saveNote(view), delay);
     }
 
-    async function saveNote(view) {
+    async function saveNote(view, { touch = true } = {}) {
         clearTimeout(view.saveTimer);
         view.saveTimer = null;
         const data = view.data;
         // Empty notes only exist while being written
         if (!data.text.trim() || !views.has(data.id)) return;
 
-        Object.assign(data, courseInfo(), { pageTitle: document.title, url: pageUrl(), updated: Date.now() });
+        Object.assign(data, pageMetadata());
+        if (touch) data.updated = Date.now();
         const key = KEY_PREFIX + data.id;
         if (new TextEncoder().encode(key + JSON.stringify(data)).length > MAX_ITEM_BYTES) {
             setStatus(view, t('noteTooLong'));
@@ -504,9 +531,7 @@
         const view = addView({
             id: newId(),
             page: currentPage,
-            url: pageUrl(),
-            pageTitle: document.title,
-            ...courseInfo(),
+            ...pageMetadata(),
             text: (ctx && ctx.selection) || selectionText.trim(),
             color: COLORS[0],
             collapsed: false,
@@ -637,10 +662,31 @@
                 }
                 return;
             }
-            if (e.target.closest('.open')) close();
+            if (e.target.closest('a')) close();
         });
 
         const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+        const safeUrl = url => (/^https?:/.test(url || '') ? url : '');
+
+        function groupHeading(key, items) {
+            if (key === 'other') return `<h3>${esc(t('panelOtherPages'))}</h3>`;
+            // Prefer the most recently saved name, in case the course was renamed
+            const named = items.find(n => n.courseName) || items[0];
+            const title = named.courseName || named.pageTitle;
+            const home = named.path && named.path[0] && safeUrl(named.path[0].url);
+            return home
+                ? `<h3><a href="${esc(home)}">${esc(title)}</a></h3>`
+                : `<h3>${esc(title)}</h3>`;
+        }
+
+        /** Breadcrumb from the course down to the note's page; each level is a link. */
+        function pathLinks(note) {
+            const path = note.path && note.path.length ? note.path : [{ text: note.pageTitle || note.url, url: note.url }];
+            return `<span class="path">${path.map(crumb => {
+                const url = safeUrl(crumb.url);
+                return url ? `<a href="${esc(url)}">${esc(crumb.text)}</a>` : `<span>${esc(crumb.text)}</span>`;
+            }).join('<span class="sep">›</span>')}</span>`;
+        }
 
         async function refresh() {
             const query = search.value.trim().toLowerCase();
@@ -660,15 +706,10 @@
                 list.innerHTML = `<p class="empty">${esc(query ? t('panelNoMatch') : t('panelEmpty'))}</p>`;
             } else {
                 list.innerHTML = [...groups.entries()].map(([key, items]) => {
-                    const title = key === 'other'
-                        ? t('panelOtherPages')
-                        : (items.find(n => n.courseName) || items[0]).courseName || items[0].pageTitle;
-                    return `<h3>${esc(title)}</h3>` + items.map(n => `
+                    return groupHeading(key, items) + items.map(n => `
                         <div class="item" data-color="${esc(n.color)}">
-                            <a class="open" href="${esc(n.url + HASH_PREFIX + encodeURIComponent(n.id))}">
-                                <span class="text">${esc(md.toPlainText(n.text))}</span>
-                                <span class="meta">${esc(n.pageTitle || n.url)} · ${esc(dateFormat.format(n.updated))}</span>
-                            </a>
+                            <a class="open" href="${esc(n.url + HASH_PREFIX + encodeURIComponent(n.id))}">${esc(md.toPlainText(n.text))}</a>
+                            <div class="meta">${pathLinks(n)}<span class="date">${esc(dateFormat.format(n.updated))}</span></div>
                             <button type="button" class="delete" data-id="${esc(n.id)}" title="${esc(t('noteDelete'))}">${ICON_TRASH}</button>
                         </div>`).join('');
                 }).join('');
@@ -884,8 +925,10 @@
         }
         .search:focus { outline: 2px solid #3b82f6; outline-offset: -1px; border-color: transparent; }
         .list { flex: 1; overflow: auto; margin-top: 12px; }
-        h3 { margin: 16px 0 6px; font-size: 13px; color: #6b7280; font-weight: 600; }
+        h3 { margin: 16px 0 6px; font-size: 14px; color: #374151; font-weight: 600; }
         h3:first-child { margin-top: 0; }
+        h3 a { color: inherit; text-decoration: none; }
+        h3 a:hover { color: #0b5cad; text-decoration: underline; }
         .item {
             position: relative;
             margin-bottom: 6px;
@@ -894,16 +937,24 @@
             background: var(--bg);
         }
         .item:hover { filter: brightness(0.97); }
-        .open { display: block; padding: 8px 40px 8px 12px; border-radius: 6px; color: inherit; text-decoration: none; }
-        .open:focus-visible { outline: 2px solid #3b82f6; }
-        .text {
+        .open {
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
             overflow-wrap: anywhere;
+            padding: 8px 40px 0 12px;
+            color: inherit;
+            text-decoration: none;
         }
-        .meta { display: block; margin-top: 2px; font-size: 12px; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .open:hover { text-decoration: underline; }
+        .open:focus-visible, .meta a:focus-visible { outline: 2px solid #3b82f6; }
+        .meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; padding: 2px 12px 8px; font-size: 12px; color: #6b7280; }
+        .path { overflow-wrap: anywhere; }
+        .path a { color: #0b5cad; text-decoration: none; }
+        .path a:hover { text-decoration: underline; }
+        .sep { margin: 0 5px; color: #9ca3af; }
+        .date { white-space: nowrap; }
         .delete {
             position: absolute;
             top: 6px;
@@ -945,9 +996,17 @@
         watchLayout();
 
         try {
+            const metadata = JSON.stringify(pageMetadata());
             (await loadAllNotes())
                 .filter(data => data.page === currentPage)
-                .forEach(addView);
+                .forEach(data => {
+                    const view = addView(data);
+                    const { courseId, courseName, path, pageTitle, url } = data;
+                    // Notes saved by older versions, or before the course was renamed
+                    if (JSON.stringify({ courseId, courseName, path, pageTitle, url }) !== metadata) {
+                        saveNote(view, { touch: false });
+                    }
+                });
         } catch (err) {
             console.error(`${LOG_PREFIX} Failed to load notes:`, err);
         }

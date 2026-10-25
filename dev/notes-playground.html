@@ -40,11 +40,20 @@
 
         <main id="region-main" class="flex-fill p-4">
             <nav aria-label="Navigation bar">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="?">首頁</a></li>
-                    <li class="breadcrumb-item"><a href="/course/view.php?id=4242">1141_程式設計(二)</a></li>
-                </ol>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="https://moodle.ncku.edu.tw/">首頁</a></li>
+                    <li class="breadcrumb-item"><a href="https://moodle.ncku.edu.tw/course/index.php">課程</a></li>
+                    <li class="breadcrumb-item"><a href="https://moodle.ncku.edu.tw/course/view.php?id=4242" title="1141_程式設計(二) PROGRAMMING (II)">1141_F720100_1</a></li>
+                </ul>
             </nav>
+            <script>
+                // ?page=assign mimics an assignment page's deeper breadcrumb
+                if (new URLSearchParams(location.search).get('page') === 'assign') {
+                    document.querySelector('.breadcrumb').insertAdjacentHTML('beforeend', `
+                        <li class="breadcrumb-item"><a href="https://moodle.ncku.edu.tw/course/view.php?id=4242#section-1">作業繳交區</a></li>
+                        <li class="breadcrumb-item"><a href="https://moodle.ncku.edu.tw/mod/assign/view.php?id=1219110" title="作業">Chapter 3 習題</a></li>`);
+                }
+            </script>
 
             <div class="iconset">
                 <div class="btn btn-secondary">
