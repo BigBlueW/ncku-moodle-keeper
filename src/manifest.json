@@ -15,10 +15,20 @@
         "48": "icons/48.png",
         "128": "icons/128.png"
     },
+    "permissions": ["storage", "contextMenus"],
+    "background": {
+        "service_worker": "background.js",
+        "scripts": ["background.js"]
+    },
     "content_scripts": [
         {
             "matches": ["*://*.ncku.edu.tw/*"],
             "js": ["session_keeper.js", "captcha.js"],
+            "run_at": "document_end"
+        },
+        {
+            "matches": ["*://moodle.ncku.edu.tw/*"],
+            "js": ["markdown.js", "sticky_notes.js"],
             "run_at": "document_end"
         }
     ],

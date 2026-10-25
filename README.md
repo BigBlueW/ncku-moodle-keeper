@@ -19,6 +19,11 @@
   - **全校系統支援**：不僅支援 Moodle，也支援成功大學選課系統 (`course.ncku.edu.tw`)、FuturePlus (`futureplus.ncku.edu.tw`)、暑修報名 (`course-query.acad.ncku.edu.tw/sum`)、通識體驗課程選課 (`exptnsel.liberal.ncku.edu.tw`)、成績查詢 (`score.ncku.edu.tw`) 等 NCKU 入口網站。
   - **極速辨識**：使用樣板匹配演算法，體積小，辨識速度快。
   - **全本地執行**：完全在瀏覽器內完成，不需額外設定、不需 API key。
+- **Moodle 便利貼**：
+  - **隨手貼上**：在 Moodle 任一頁面按右鍵 →「在這裡新增便利貼」，便利貼會黏在點的位置（例如某份作業旁邊），版面變動也會跟著移動。
+  - **支援 Markdown**：粗體、清單、連結、程式碼，以及可直接打勾的 `- [ ]` 勾選清單。
+  - **跨裝置同步**：登入同一個瀏覽器帳號並開啟同步，便利貼會自動出現在你的其他電腦上。
+  - **集中管理**：Moodle 首頁的「便利貼」按鈕可以瀏覽、搜尋、刪除所有便利貼，並一鍵跳到所在頁面。
 
 ### 如何手動安裝
 1. 在 GitHub 的 [Releases](https://github.com/bigbluew/ncku-moodle-keeper/releases) 頁面下載最新版 `ncku-moodle-keeper.zip`。
@@ -55,6 +60,11 @@ A simple browser extension designed to prevent automatic logout on the NCKU Mood
   - **Campus-Wide Support**: Works not only on Moodle but also on other NCKU portals like the Course Registration system (`course.ncku.edu.tw`), FuturePlus (`futureplus.ncku.edu.tw`), Summer Course Signup (`course-query.acad.ncku.edu.tw/sum`), Liberal Education course selection (`exptnsel.liberal.ncku.edu.tw`) and Score Inquiry (`score.ncku.edu.tw`).
   - **Extremely Fast**: Uses a template matching algorithm, small size, fast recognition.
   - **All Local Execution**: Runs entirely within the browser, no extra setup, no API keys required.
+- **Moodle Sticky Notes**:
+  - **Pin Anywhere**: Right-click anywhere on Moodle → "Add sticky note here". The note sticks to that spot (e.g. next to an assignment) and follows it when the layout changes.
+  - **Markdown**: Bold, lists, links, code, and clickable `- [ ]` checklists.
+  - **Synced Across Devices**: With browser sync enabled, your notes show up on your other computers automatically.
+  - **Manage in One Place**: The "Sticky Notes" button on the Moodle front page lets you browse, search and delete all notes, and jump straight to each one.
 
 ### How to Install Manually
 1. Go to the project's [Releases](https://github.com/bigbluew/ncku-moodle-keeper/releases) page and download the latest `ncku-moodle-keeper.zip`.

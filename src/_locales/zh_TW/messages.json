@@ -1,4 +1,22 @@
 {
   "extName": { "message": "NCKU Moodle Keeper" },
-  "extDescription": { "message": "自動延長連線時間，並辨識驗證碼。" }
+  "extDescription": { "message": "自動延長連線時間，並辨識驗證碼。" },
+  "menuAddNote": { "message": "在這裡新增便利貼" },
+  "noteColor": { "message": "顏色" },
+  "noteCollapse": { "message": "收合" },
+  "noteExpand": { "message": "展開便利貼" },
+  "noteDelete": { "message": "刪除" },
+  "noteDeleteConfirm": { "message": "再按一次刪除" },
+  "notePlaceholder": { "message": "輸入內容，支援 Markdown 與 - [ ] 勾選清單" },
+  "noteTooLong": { "message": "內容太長，無法儲存，請縮短一些。" },
+  "noteQuotaFull": { "message": "儲存空間已滿，請先刪除一些便利貼。" },
+  "noteSaveFailed": { "message": "儲存失敗：$1" },
+  "panelButton": { "message": "便利貼(Sticky Notes)" },
+  "panelTitle": { "message": "我的便利貼" },
+  "panelSearch": { "message": "搜尋便利貼…" },
+  "panelEmpty": { "message": "還沒有便利貼。在 Moodle 任一頁面按右鍵，選「在這裡新增便利貼」。" },
+  "panelNoMatch": { "message": "找不到符合的便利貼。" },
+  "panelClose": { "message": "關閉" },
+  "panelOtherPages": { "message": "其他頁面" },
+  "panelUsage": { "message": "已使用 $1 / $2 KB（跨裝置同步）" }
 }

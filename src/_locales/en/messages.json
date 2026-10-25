@@ -1,4 +1,22 @@
 {
   "extName": { "message": "NCKU Moodle Keeper" },
-  "extDescription": { "message": "Automatically keep your NCKU Moodle session alive and auto-solve CAPTCHAs." }
+  "extDescription": { "message": "Automatically keep your NCKU Moodle session alive and auto-solve CAPTCHAs." },
+  "menuAddNote": { "message": "Add sticky note here" },
+  "noteColor": { "message": "Color" },
+  "noteCollapse": { "message": "Collapse" },
+  "noteExpand": { "message": "Expand note" },
+  "noteDelete": { "message": "Delete" },
+  "noteDeleteConfirm": { "message": "Click again to delete" },
+  "notePlaceholder": { "message": "Type here. Markdown and - [ ] checklists are supported" },
+  "noteTooLong": { "message": "This note is too long to save. Please shorten it." },
+  "noteQuotaFull": { "message": "Storage is full. Delete some notes first." },
+  "noteSaveFailed": { "message": "Could not save: $1" },
+  "panelButton": { "message": "Sticky Notes" },
+  "panelTitle": { "message": "My Sticky Notes" },
+  "panelSearch": { "message": "Search notes…" },
+  "panelEmpty": { "message": "No notes yet. Right-click anywhere on Moodle and choose “Add sticky note here”." },
+  "panelNoMatch": { "message": "No matching notes." },
+  "panelClose": { "message": "Close" },
+  "panelOtherPages": { "message": "Other pages" },
+  "panelUsage": { "message": "$1 / $2 KB used (synced across devices)" }
 }
