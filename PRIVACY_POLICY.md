@@ -4,11 +4,20 @@ Last updated: October 25, 2026
 
 Your privacy is important to us. This privacy policy explains how **NCKU Moodle Keeper** (the "Extension") handles your data.
 
-## 1. No Data Collection
-**The developer of NCKU Moodle Keeper does not collect, receive, or transmit any user data.**
-- All processes, including session renewal and captcha recognition, happen entirely on your local machine within the browser.
-- No personal information, browsing history, or authentication credentials (passwords) are ever sent to an external server or stored by the developer.
-- **Sticky notes** you create are saved with your browser's built-in extension storage (`chrome.storage.sync`). Each note contains its text, color, position, and the Moodle page and course it belongs to. If browser sync is enabled, your browser provider (e.g. Google for Chrome, Mozilla for Firefox) syncs this data between your own devices as part of your browser account. The developer never receives or has access to it. Deleting a note removes it from this storage.
+## 1. Data the Extension Handles
+**The developer of NCKU Moodle Keeper does not collect, receive, or transmit any user data.** No data is ever sent to the developer or to any server operated by the developer. The Extension handles the following data only inside your browser:
+
+- **Captcha images (website content)**: On supported NCKU login pages, the captcha image is read and recognized entirely on your device. The image and the recognized code are not stored or sent anywhere; the code is only filled into the page's captcha field.
+- **Moodle session renewal**: The Extension periodically requests the Moodle page you already have open so that your login session stays active. It does not read your password or any login credentials.
+- **Sticky notes (website content and web history)**: Each sticky note you create contains:
+  - the text you type, or text you selected on the page when creating it;
+  - its color, size and position on the page;
+  - the address (URL), title, course name and breadcrumb path of the Moodle page it was placed on, so it can be shown on that page and listed in the notes panel;
+  - when it was created and last edited.
+
+  Notes are saved with your browser's built-in extension storage (`chrome.storage.sync`). If browser sync is turned on, your browser provider (e.g. Google for Chrome, Mozilla for Firefox) syncs this data between your own devices as part of your browser account, under that provider's privacy policy. The developer never receives or has access to it. Deleting a note removes it from this storage.
+
+The Extension never handles your password or other authentication credentials, and does not record pages you visit other than the Moodle pages where you choose to place a sticky note.
 
 ## 2. Permissions Justification
 The Extension requires the following permissions to function:
