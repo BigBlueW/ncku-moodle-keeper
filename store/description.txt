@@ -5,14 +5,7 @@ NCKU Moodle Keeper 是為成功大學學生打造的瀏覽器擴充功能：防�
 每 9 分鐘自動在背景與 Moodle 通訊，防止您的登入狀態過期。
 
 2. 自動驗證碼辨識：
-支援多個 NCKU 相關入口網站的驗證碼自動辨識，包含：
-- NCKU Moodle
-- 成功大學選課系統 (course.ncku.edu.tw)
-- FuturePlus (futureplus.ncku.edu.tw)
-- 暑修報名系統
-- 通識體驗課程選課系統
-- 成績查詢系統
-- 等等
+在 Moodle、選課系統等成大網站的登入頁，自動辨識並填入驗證碼，省去手動輸入的麻煩。完整支援清單請見 GitHub 專案頁。
 
 辨識使用輕量的樣板匹配演算法，不需要連上外部伺服器，所有辨識過程皆在您的瀏覽器本地端完成，確保隱私與安全。
 
@@ -37,14 +30,7 @@ NCKU Moodle Keeper is a browser extension for NCKU students: it keeps you logged
 [Key Features]
 1. Auto-Renewal: Automatically communicates with Moodle in the background every 9 minutes to prevent session expiration.
 
-2. Captcha Solver: Supports lightning-fast automatic captcha recognition for multiple NCKU portals:
-- NCKU Moodle
-- Course Registration system
-- FuturePlus
-- Summer Course Signup
-- Liberal Education course selection
-- Score Inquiry
-- etc.
+2. Captcha Solver: Automatically reads and fills in the CAPTCHA on NCKU login pages such as Moodle and the course registration system. See the GitHub page for the full list of supported sites.
 
 It uses a lightweight template matching algorithm. It does NOT use external APIs, meaning all processes run locally on your browser.
 
